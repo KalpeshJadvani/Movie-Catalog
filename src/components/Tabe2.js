@@ -34,7 +34,7 @@ class Tabe2 extends Component {
 
   clickHandler = (imdbID) => {
     this.setState({ activateModal: true, detailRequest: true }, () => {
-      fetch(`http://www.omdbapi.com/?i=${imdbID}&apikey=${API_KEY}`)
+      fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${API_KEY}`)
         .then((resp) => resp)
         .then((resp) => resp.json())
         .then((response) => {
@@ -51,7 +51,7 @@ class Tabe2 extends Component {
   };
   apiCall = () => {
     const { q, y } = this.state;
-    fetch(`http://www.omdbapi.com/?s=${q}&y=${y}&apikey=${API_KEY}`)
+    fetch(`https://www.omdbapi.com/?s=${q}&y=${y}&apikey=${API_KEY}`)
       .then((result) => result.json())
       .then((response) => {
         this.setState({
