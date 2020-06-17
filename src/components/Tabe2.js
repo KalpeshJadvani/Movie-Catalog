@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Row, Alert, Modal } from 'antd';
+import { Layout, Row, Alert, Modal, Button } from 'antd';
 import SearchBox from './elements/SearchBox';
 import Loader from './elements/Loader';
 import ColCardBox from './elements/ColCardBox';
@@ -25,6 +25,8 @@ class Tabe2 extends Component {
         data: '',
         error: null,
         loading: true,
+        totalResults: '',
+        page: 1,
       },
       () => {
         this.apiCall();
@@ -34,7 +36,7 @@ class Tabe2 extends Component {
 
   clickHandler = (imdbID) => {
     this.setState({ activateModal: true, detailRequest: true }, () => {
-      fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${API_KEY}`)
+      fetch(`https://www.omdbapi.com/?i=${imdbID}&page=2&apikey=${API_KEY}`)
         .then((resp) => resp)
         .then((resp) => resp.json())
         .then((response) => {
@@ -42,6 +44,7 @@ class Tabe2 extends Component {
             activateModal: true,
             detailRequest: false,
             detail: response,
+            totalResults: response.totalResults,
           });
         })
         .catch(({ message }) => {
@@ -50,12 +53,15 @@ class Tabe2 extends Component {
     });
   };
   apiCall = () => {
-    const { q, y } = this.state;
-    fetch(`https://www.omdbapi.com/?s=${q}&y=${y}&apikey=${API_KEY}`)
+    const { q, y, page } = this.state;
+    fetch(
+      `https://www.omdbapi.com/?s=${q}&y=${y}&page=${page}&apikey=${API_KEY}`
+    )
       .then((result) => result.json())
       .then((response) => {
         this.setState({
           data: response.Search ? response.Search : [],
+          totalResults: response.totalResults,
           error: response.Response === 'False' ? response.Error : null,
           loading: false,
         });
@@ -86,6 +92,17 @@ class Tabe2 extends Component {
       if (this.state.q) this.apiCall();
     });
   };
+
+  nextPage = () => {
+    this.setState(
+      (perState) => {
+        return { page: perState.page + 1 };
+      },
+      () => {
+        this.apiCall();
+      }
+    );
+  };
   render() {
     const {
       loading,
@@ -102,6 +119,7 @@ class Tabe2 extends Component {
           searchYear={this.searchYear}
           onTextChange={this.onTextChange}
         />
+        <Button onClick={this.nextPage}> Next Page</Button>
         <br />
         <Row gutter={16} type="flex" justify="center">
           {loading && <Loader />}

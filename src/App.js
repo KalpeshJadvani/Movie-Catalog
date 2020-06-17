@@ -4,7 +4,7 @@ import Container from './components/Container';
 
 class App extends Component {
   state = {
-    tab: 'tab1',
+    tab: 'tab2',
   };
 
   tabEvent = (e, tab) => {
